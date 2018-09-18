@@ -1,78 +1,54 @@
 'use strict';
 
-var getRandomInt = function(min, max) {
-    return Math.floor(Math.random() * (max - min)) + min;
-};
+(function () {
+  var generatePhotos = function (quantity) {
+    var comments = [
+      'Всё отлично!', 'В целом не плохо. Но не всё.',
+      'Когда вы делаете фотографию, хорошо бы убрать палец из кадра. В конце концов это просто непрофессионально',
+      'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
+      'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше',
+      'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой недачный момент?'
+    ];
 
-var getPictures = function(quantity) {
-    var arr = [];
+    var photos = [];
 
-    for (var i = 0; i < quantity; i++) {
-        arr.push({
-            url: 'photos/' + (i + 1) + '.jpg',
-            likes: getRandomInt(15, 200),
-            comments: CONTENT_EXAMPLES.comments[getRandomInt(0, CONTENT_EXAMPLES.comments.length)],
-            description: CONTENT_EXAMPLES.descriptions[getRandomInt(0, CONTENT_EXAMPLES.descriptions.length)]
-        });
+    for (var i = 1; i <= quantity; i++) {
+      var photo = {
+        url: 'photos/' + i + '.jpg',
+        likes: window.util.getRandomInt(15, 201)
+      };
+
+      if (window.util.getRandomInt(0, 2) > 0) {
+        photo.comments = [comments[window.util.getRandomInt(0, comments.length)], 
+          comments[window.util.getRandomInt(0, comments.length)]];
+      } else {
+        photo.comments = [comments[window.util.getRandomInt(0, comments.length)]];
+      }
+
+      photos.push(photo);
     }
 
-    return arr;
-};
+    return photos;
+  };
 
-var renderPictures = function(arr, template) {
+  var generateElements = function (photo) {
+    var photoElement = document.querySelector('#picture-template').content.cloneNode(true);
+
+    photoElement.querySelector('img').src = photo.url;
+    photoElement.querySelector('.picture-likes').textContent = photo.likes;
+    photoElement.querySelector('.picture-comments').textContent = photo.comments.length.toString();
+
+    return photoElement;
+  };
+
+  var showPhotoElements = function (photos) {
     var fragment = document.createDocumentFragment();
-
-    for (var i = 0; i < arr.length; i++) {
-        var picture = template.cloneNode(true);
-
-        picture.querySelector('img').src = arr[i].url;
-        picture.querySelector('.picture-likes').textContent = arr[i].likes;
-        picture.querySelector('.picture-comments').textContent = arr[i].comments.length.toString();
-
-        fragment.appendChild(picture);
+    var pictures = document.querySelector('.pictures');
+    for (var i = 0; i < photos.length; i++) {
+      fragment.appendChild(generateElements(photos[i]));
     }
+    pictures.appendChild(fragment);
+  };
 
-    return fragment;
-};
-
-var renderBigPicture = function(data) {
-    var bigPicture = document.querySelector('.gallery-overlay');
-
-    bigPicture.querySelector('.gallery-overlay-image').src = data.url;
-    bigPicture.querySelector('.likes-count').textContent = data.likes;
-    bigPicture.querySelector('.comments-count').textContent = data.comments.length.toString();
-
-    bigPicture.classList.remove('hidden');
-};
-
-var DESCRIPTION_EXAMPLES = [
-    ''
-];
-
-var CONTENT_EXAMPLES = {
-    comments: [
-        'Все отлично!',
-        'В целом все не плохо. Но не все!',
-        'Когда вы делаете фото, хорошо бы убирать палец из кадра!',
-        'Моя бабушка чихнула с фотиком в руказ и у нее вышло лучше.',
-        'Мой кот сделал бы лучше.',
-        'Как можно было поймать такой неудачный момент?!'
-    ],
-    descriptions: [
-        'Тестим новую камеру!',
-        'Затусили с друзьями на море',
-        'Как же круто тут кормят',
-        'Отдыхаем...',
-        'Вот это тачка!'
-    ]
-};
-
-var pictures = getPictures(25);
-var similarPicturesList = document.querySelector('.pictures');
-var template = document.getElementById('picture-template')
-    .content
-    .querySelector('.picture');
-
-similarPicturesList.appendChild(renderPictures(pictures, template));
-
-renderBigPicture(pictures[0]);
+  showPhotoElements(generatePhotos(25));
+})();
