@@ -2,9 +2,8 @@
 
 (function () {
   var gallery = document.querySelector('.gallery-overlay');
-  var pictureList = document.querySelectorAll('.picture');
   var galleryClose = gallery.querySelector('.gallery-overlay-close');
-  
+
   var closePopup = function () {
     gallery.classList.add('hidden');
     document.removeEventListener('keydown', onDocumentEscPress);
@@ -50,6 +49,8 @@
  
   galleryClose.addEventListener('click', onGalleryCloseClick);
   galleryClose.addEventListener('keydown', onGalleryCloseEnterPress);
+
+  var pictureList = document.querySelectorAll('.picture');
 
   for (var i = 0; i < pictureList.length; i++) {
     pictureList[i].addEventListener('click', onPictureClick);
